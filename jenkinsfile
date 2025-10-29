@@ -5,6 +5,14 @@ pipeline {
         LASTNAME='MARTI'
     }
     stages {
+     stage('Compile') {
+            steps {
+                echo "This is the compile stage de $NAME $LASTNAME"
+                withMaven(maven: 'maven'){
+                    sh 'mvn clean compile'
+                }
+            }
+        }
         stage('Build') {
             steps {
                 echo "This is the build stage de $NAME $LASTNAME"
