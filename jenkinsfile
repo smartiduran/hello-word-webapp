@@ -16,14 +16,19 @@ pipeline {
         stage('Build') {
             steps {
                 echo "This is the build stage de $NAME $LASTNAME"
-                sh 'ls -lrta'
-                sh 'echo Ruta actual: $(pwd)'
+                withMaven(maven: 'maven'){
+                    sh 'mvn package'
+                }
             }
         }
 
         stage('Test') {
             steps {
                 echo "This is the test stage"
+                withMaven(maven: 'maven'){
+                    sh 'mvn test'
+                }
+
 
                 // Primer bloque con retry "normal"
                 retry(3) {
