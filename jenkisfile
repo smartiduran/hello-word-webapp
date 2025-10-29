@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    environment{
+        NAME='SERGI'
+        LASTNAME='MARTI'
+    }
+    stages {
+        stage('Build') {
+            steps {
+                echo "This is the build stage de $NAME $LASTNAME"
+                sh 'ls -lrta'
+                sh 'echo Ruta actual: $(pwd)'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo "This is the test stage"
+
+                // Primer bloque con retry "normal"
+                retry(3) {
+                    sh "echo Retrying several times..."
+                }
+
+                // Segundo bloque: retry bajo timeout estricto
+                retry(3) {
+                    timeout(time: 3, unit: 'SECONDS') {
+                        sh "echo Intento con timeout individual"
+                        sh 'sleep 5'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "This is the deploy stage"
+            }
+        }
+    }
+    post{
+        always{
+            echo 'Final del script'  
+        }
+        success {
+            echo 'FIN OK'
+        }
+        failure{
+            echo 'Final no OK'
+        }
+        unstable{
+            echo 'Final no estable'
+        }
+        aborted{
+            echo 'Fianl abortado'
+        }
+    }
+}
